@@ -8,7 +8,8 @@ function App() {
   return useRoutes([
     {
       path: "/",
-      element: <Navbar />,
+      element: <Navbar/>,
+      
       children: [
         { path: "products/:category", element: <Products /> },
         { path: "productDetail/:id", element: <ProductDetail /> },

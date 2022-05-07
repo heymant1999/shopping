@@ -1,11 +1,12 @@
 import React from "react";
-import icon from "../img/icon.jpg";
-import cart from "../img/cart.png";
-import profile from "../img/profile.png";
 import { Outlet, useNavigate } from "react-router-dom";
+import shoppingCart from "../img/cart.png";
+import user from "../img/user.png";
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { getData, setCategories } from "../redux/actions/action";
 
 const Navbar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -13,6 +14,8 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
 
+  const cartValue = useSelector((state) => state.allReducers.cartValue);
+  
   const getAllProducts = () => {
     axios
       .get("https://fakestoreapi.com/products")
@@ -50,15 +53,13 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="mx-auto px-1 h-12 w-full flex  border-2 justify-between">
-        <button>
-          <img src={icon} className="h-8" />
-        </button>
+      <div className="mx-auto px-1 h-16 w-full flex  border-2 items-center justify-between  bg-black  ">
+        <div className="flex text-slate-300 ml-2 text-3xl">eShop</div>
         <div className={`w-2/5  flex flex-col z-10`}>
           <input
             type="text"
-            className="w-full px-1 h-11"
-            placeholder="search"
+            className="w-full px-1 h-8 bg-black text-slate-100"
+            placeholder="  search..."
             value={searchText}
             onBlur={() => setSearchText("")}
             onChange={(e) => {
@@ -66,7 +67,7 @@ const Navbar = () => {
             }}
           />
 
-          <div className="w-full flex flex-col border-2  bg-white shadow-md z-10 rounded-b-lg">
+          {/* <div className="w-full flex flex-col border-2  bg-white z-10 rounded-b-lg">
             {suggestions.map((suggestion) => {
               return (
                 <div className="mt p-1 ">
@@ -80,14 +81,15 @@ const Navbar = () => {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </div>
-        <div>
+        <div className="flex mr-4 bg-slate-700 w-35 rounded-lg h-12">
           <button>
-            <img src={cart} className="h-8" alt="cart" />
+            <img src={shoppingCart} className="h-8 m-2" alt="cart" />
           </button>
+          <div className="text-white text-lg font-medium">{cartValue}</div>
           <button onClick={() => setShowProfileMenu(!showProfileMenu)}>
-            <img src={profile} className="h-8 ml-2" alt="profile" />
+            <img src={user} className="h-8 m-2" alt="profile" />
           </button>
           {showProfileMenu && <ProfileMenu />}
         </div>
@@ -101,19 +103,19 @@ const Navbar = () => {
 };
 
 function Sidebar() {
-  const [showCategories, setShowCategories] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.allReducers.categories);
   const getCategories = () => {
     axios
       .get("https://fakestoreapi.com/products/categories")
       .then((res) => {
-        setCategories(res ? res.data : "");
-        setShowCategories(true);
+        dispatch(setCategories(res.data));
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -127,7 +129,7 @@ function Sidebar() {
           <div>
             <ul>
               <li
-                className="hover:cursor-pointer text-slate-500"
+                className="hover:cursor-pointer hover:bg-slate-200 p-1 rounded-md text-slate-500"
                 onClick={() => navigate(`/products/${category}`)}
               >
                 <h6 className="mt-2">{category}</h6>
@@ -141,15 +143,19 @@ function Sidebar() {
 }
 
 function ProfileMenu() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div className="relative">
       <ul className="z-10">
-        <li className="h-30 w-20 bg-slate-100 z-10" >
-         <button onClick={()=> navigate("/")} className="z-100">Home</button>
+        <li className="h-30 w-20 bg-slate-100 z-10">
+          <button onClick={() => navigate("/")} className="z-100">
+            Home
+          </button>
         </li>
-        <li className="h-30 w-20 bg-slate-100 z-10" >
-          <button className="z-100" onClick={()=> navigate("/profile")}>Profile</button>
+        <li className="h-30 w-20 bg-slate-100 z-10">
+          <button className="z-100" onClick={() => navigate("/profile")}>
+            Profile
+          </button>
         </li>
       </ul>
     </div>
