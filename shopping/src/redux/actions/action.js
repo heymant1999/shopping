@@ -22,6 +22,7 @@ export const updateCart = () => {
     type: ActionTypes.UPDATE_CART,
   };
 };
+
 // export const selectdProducts = (product) => {
 //   return {
 //     type: ActionTypes.SELECTD_PRODUCTS,
